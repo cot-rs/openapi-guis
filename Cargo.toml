@@ -1,0 +1,36 @@
+[workspace]
+members = [
+    "swagger-ui",
+]
+resolver = "2"
+
+[workspace.package]
+edition = "2024"
+rust-version = "1.85"
+repository = "https://github.com/cot-rs/openapi-guis"
+keywords = ["openapi", "gui", "swagger", "api", "documentation"]
+readme = "README.md"
+authors = [
+    "Mateusz Maćkowski <mateusz@mackowski.org>",
+]
+
+[workspace.lints.rust]
+deprecated-safe = "warn"
+keyword-idents = "warn"
+missing_copy_implementations = "warn"
+missing_debug_implementations = "warn"
+trivial_casts = "warn"
+trivial_numeric_casts = "warn"
+unreachable_pub = "warn"
+unsafe_code = "warn"
+unstable_features = "warn"
+unused_import_braces = "warn"
+unused_qualifications = "warn"
+rust_2018_idioms = { level = "warn", priority = -1 }
+
+[workspace.lints.clippy]
+all = { level = "deny", priority = -1 }
+pedantic = "warn"
+future_not_send = "warn"
+
+[workspace.dependencies]
