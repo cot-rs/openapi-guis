@@ -1,5 +1,5 @@
 [package]
-name = "swagger-ui"
+name = "swagger-ui-redist"
 version = "0.1.0"
 edition.workspace = true
 rust-version.workspace = true
@@ -7,8 +7,14 @@ repository.workspace = true
 keywords.workspace = true
 readme.workspace = true
 authors.workspace = true
+categories = ["web-programming"]
 
 [dependencies]
+serde = { workspace = true, features = ["derive"] }
+serde_json = { workspace = true, features = ["std"] }
+
+[dev-dependencies]
+similar.workspace = true
 
 [lints]
 workspace = true

@@ -4,43 +4,42 @@ use std::collections::HashMap;
 
 use serde::Serialize;
 
-const END_MARKER: &str = "//</editor-fold>";
-
 /// Object used to alter Swagger UI oauth settings.
 ///
 /// # Examples
 ///
-/// ```rust
-/// # use utoipa_swagger_ui::oauth;
+/// ```
+/// # use swagger_ui_redist::oauth;
 /// let config = oauth::Config::new()
 ///     .client_id("client-id")
 ///     .use_pkce_with_authorization_code_grant(true);
 /// ```
 #[non_exhaustive]
-#[derive(Default, Clone, Serialize)]
-#[cfg_attr(feature = "debug", derive(Debug))]
+#[derive(Debug, Default, Clone, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct Config {
-    /// oauth client_id the Swagger UI is using for auth flow.
+    /// oauth `client_id` the Swagger UI is using for auth flow.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub client_id: Option<String>,
 
-    /// oauth client_secret the Swagger UI is using for auth flow.
+    /// oauth `client_secret` the Swagger UI is using for auth flow.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub client_secret: Option<String>,
 
     /// oauth realm the Swagger UI is using for auth flow.
-    /// realm query parameter (for oauth1) added to authorizationUrl and tokenUrl.
+    /// realm query parameter (for oauth1) added to authorizationUrl and
+    /// tokenUrl.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub realm: Option<String>,
 
-    /// oauth app_name the Swagger UI is using for auth flow.
+    /// oauth `app_name` the Swagger UI is using for auth flow.
     /// application name, displayed in authorization popup.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub app_name: Option<String>,
 
-    /// oauth scope_separator the Swagger UI is using for auth flow.
-    /// scope separator for passing scopes, encoded before calling, default value is a space (encoded value %20).
+    /// oauth `scope_separator` the Swagger UI is using for auth flow.
+    /// scope separator for passing scopes, encoded before calling, default
+    /// value is a space (encoded value %20).
     #[serde(skip_serializing_if = "Option::is_none")]
     pub scope_separator: Option<String>,
 
@@ -49,21 +48,22 @@ pub struct Config {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub scopes: Option<Vec<String>>,
 
-    /// oauth additional_query_string_params the Swagger UI is using for auth flow.
-    /// [`HashMap<String, String>`] of additional query parameters added to authorizationUrl and tokenUrl.
+    /// oauth `additional_query_string_params` the Swagger UI is using for auth
+    /// flow. [`HashMap<String, String>`] of additional query parameters
+    /// added to authorizationUrl and tokenUrl.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub additional_query_string_params: Option<HashMap<String, String>>,
 
-    /// oauth use_basic_authentication_with_access_code_grant the Swagger UI is using for auth flow.
-    /// Only activated for the accessCode flow. During the authorization_code request to the tokenUrl,
-    /// pass the [Client Password](https://tools.ietf.org/html/rfc6749#section-2.3.1) using the HTTP Basic Authentication scheme
-    /// (Authorization header with Basic base64encode(client_id + client_secret)).
-    /// The default is false.
+    /// oauth `use_basic_authentication_with_access_code_grant` the Swagger UI
+    /// is using for auth flow. Only activated for the accessCode flow.
+    /// During the `authorization_code` request to the tokenUrl, pass the [Client Password](https://tools.ietf.org/html/rfc6749#section-2.3.1) using the HTTP Basic Authentication scheme
+    /// (Authorization header with Basic `base64encode(client_id` +
+    /// `client_secret`)). The default is false.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub use_basic_authentication_with_access_code_grant: Option<bool>,
 
-    /// oauth use_pkce_with_authorization_code_grant the Swagger UI is using for auth flow.
-    /// Only applies to authorizationCode flows. [Proof Key for Code Exchange](https://tools.ietf.org/html/rfc7636)
+    /// oauth `use_pkce_with_authorization_code_grant` the Swagger UI is using
+    /// for auth flow. Only applies to authorizationCode flows. [Proof Key for Code Exchange](https://tools.ietf.org/html/rfc7636)
     /// brings enhanced security for OAuth public clients.
     /// The default is false.
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -75,47 +75,47 @@ impl Config {
     ///
     /// # Examples
     ///
-    /// ```rust
-    /// # use utoipa_swagger_ui::oauth;
+    /// ```
+    /// # use swagger_ui_redist::oauth;
     /// let config = oauth::Config::new();
     /// ```
+    #[must_use]
     pub fn new() -> Self {
         Self {
             ..Default::default()
         }
     }
 
-    /// Add client_id into [`Config`].
+    /// Add `client_id` into [`Config`].
     ///
-    /// Method takes one argument which exposes the client_id to the user.
+    /// Method takes one argument which exposes the `client_id` to the user.
     ///
     /// # Examples
     ///
-    /// ```rust
-    /// # use utoipa_swagger_ui::oauth;
-    /// let config = oauth::Config::new()
-    ///     .client_id("client-id");
     /// ```
-    pub fn client_id(mut self, client_id: &str) -> Self {
+    /// # use swagger_ui_redist::oauth;
+    /// oauth::Config::new().client_id("client-id");
+    /// ```
+    pub fn client_id(&mut self, client_id: &str) -> &mut Self {
         self.client_id = Some(String::from(client_id));
 
         self
     }
 
-    /// Add client_secret into [`Config`].
+    /// Add `client_secret` into [`Config`].
     ///
-    /// Method takes one argument which exposes the client_secret to the user.
+    /// Method takes one argument which exposes the `client_secret` to the user.
     /// 🚨 Never use this parameter in your production environment.
-    /// It exposes crucial security information. This feature is intended for dev/test environments only. 🚨
+    /// It exposes crucial security information. This feature is intended for
+    /// dev/test environments only. 🚨
     ///
     /// # Examples
     ///
-    /// ```rust
-    /// # use utoipa_swagger_ui::oauth;
-    /// let config = oauth::Config::new()
-    ///     .client_secret("client-secret");
     /// ```
-    pub fn client_secret(mut self, client_secret: &str) -> Self {
+    /// # use swagger_ui_redist::oauth;
+    /// oauth::Config::new().client_secret("client-secret");
+    /// ```
+    pub fn client_secret(&mut self, client_secret: &str) -> &mut Self {
         self.client_secret = Some(String::from(client_secret));
 
         self
@@ -124,52 +124,51 @@ impl Config {
     /// Add realm into [`Config`].
     ///
     /// Method takes one argument which exposes the realm to the user.
-    /// realm query parameter (for oauth1) added to authorizationUrl and tokenUrl.
+    /// realm query parameter (for oauth1) added to authorizationUrl and
+    /// tokenUrl.
     ///
     /// # Examples
     ///
-    /// ```rust
-    /// # use utoipa_swagger_ui::oauth;
-    /// let config = oauth::Config::new()
-    ///     .realm("realm");
     /// ```
-    pub fn realm(mut self, realm: &str) -> Self {
+    /// # use swagger_ui_redist::oauth;
+    /// oauth::Config::new().realm("realm");
+    /// ```
+    pub fn realm(&mut self, realm: &str) -> &mut Self {
         self.realm = Some(String::from(realm));
 
         self
     }
 
-    /// Add app_name into [`Config`].
+    /// Add `app_name` into [`Config`].
     ///
-    /// Method takes one argument which exposes the app_name to the user.
+    /// Method takes one argument which exposes the `app_name` to the user.
     /// application name, displayed in authorization popup.
     ///
     /// # Examples
     ///
-    /// ```rust
-    /// # use utoipa_swagger_ui::oauth;
-    /// let config = oauth::Config::new()
-    ///     .app_name("app-name");
     /// ```
-    pub fn app_name(mut self, app_name: &str) -> Self {
+    /// # use swagger_ui_redist::oauth;
+    /// let config = oauth::Config::new().app_name("app-name");
+    /// ```
+    pub fn app_name(&mut self, app_name: &str) -> &mut Self {
         self.app_name = Some(String::from(app_name));
 
         self
     }
 
-    /// Add scope_separator into [`Config`].
+    /// Add `scope_separator` into [`Config`].
     ///
-    /// Method takes one argument which exposes the scope_separator to the user.
-    /// scope separator for passing scopes, encoded before calling, default value is a space (encoded value %20).
+    /// Method takes one argument which exposes the `scope_separator` to the
+    /// user. scope separator for passing scopes, encoded before calling,
+    /// default value is a space (encoded value %20).
     ///
     /// # Examples
     ///
-    /// ```rust
-    /// # use utoipa_swagger_ui::oauth;
-    /// let config = oauth::Config::new()
-    ///     .scope_separator(",");
     /// ```
-    pub fn scope_separator(mut self, scope_separator: &str) -> Self {
+    /// # use swagger_ui_redist::oauth;
+    /// let config = oauth::Config::new().scope_separator(",");
+    /// ```
+    pub fn scope_separator(&mut self, scope_separator: &str) -> &mut Self {
         self.scope_separator = Some(String::from(scope_separator));
 
         self
@@ -182,89 +181,90 @@ impl Config {
     ///
     /// # Examples
     ///
-    /// ```rust
-    /// # use utoipa_swagger_ui::oauth;
-    /// let config = oauth::Config::new()
-    ///     .scopes(vec![String::from("openid")]);
     /// ```
-    pub fn scopes(mut self, scopes: Vec<String>) -> Self {
+    /// # use swagger_ui_redist::oauth;
+    /// let config = oauth::Config::new().scopes(vec![String::from("openid")]);
+    /// ```
+    pub fn scopes(&mut self, scopes: Vec<String>) -> &mut Self {
         self.scopes = Some(scopes);
 
         self
     }
 
-    /// Add additional_query_string_params into [`Config`].
+    /// Add `additional_query_string_params` into [`Config`].
     ///
-    /// Method takes one argument which exposes the additional_query_string_params to the user.
-    /// [`HashMap<String, String>`] of additional query parameters added to authorizationUrl and tokenUrl.
+    /// Method takes one argument which exposes the
+    /// `additional_query_string_params` to the user. [`HashMap<String,
+    /// String>`] of additional query parameters added to authorizationUrl and
+    /// tokenUrl.
     ///
     /// # Examples
     ///
-    /// ```rust
-    /// # use utoipa_swagger_ui::oauth;
+    /// ```
+    /// # use swagger_ui_redist::oauth;
     /// # use std::collections::HashMap;
     /// let config = oauth::Config::new()
     ///     .additional_query_string_params(HashMap::from([(String::from("a"), String::from("1"))]));
     /// ```
     pub fn additional_query_string_params(
-        mut self,
+        &mut self,
         additional_query_string_params: HashMap<String, String>,
-    ) -> Self {
+    ) -> &mut Self {
         self.additional_query_string_params = Some(additional_query_string_params);
 
         self
     }
 
-    /// Add use_basic_authentication_with_access_code_grant into [`Config`].
+    /// Add `use_basic_authentication_with_access_code_grant` into [`Config`].
     ///
-    /// Method takes one argument which exposes the use_basic_authentication_with_access_code_grant to the user.
-    /// Only activated for the accessCode flow. During the authorization_code request to the tokenUrl,
-    /// pass the [Client Password](https://tools.ietf.org/html/rfc6749#section-2.3.1) using the HTTP Basic Authentication scheme
-    /// (Authorization header with Basic base64encode(client_id + client_secret)).
-    /// The default is false.
+    /// Method takes one argument which exposes the
+    /// `use_basic_authentication_with_access_code_grant` to the user.
+    /// Only activated for the accessCode flow. During the `authorization_code`
+    /// request to the tokenUrl, pass the [Client Password](https://tools.ietf.org/html/rfc6749#section-2.3.1) using the HTTP Basic Authentication scheme
+    /// (Authorization header with Basic `base64encode(client_id` +
+    /// `client_secret`)). The default is false.
     ///
     /// # Examples
     ///
-    /// ```rust
-    /// # use utoipa_swagger_ui::oauth;
-    /// let config = oauth::Config::new()
-    ///     .use_basic_authentication_with_access_code_grant(true);
+    /// ```
+    /// # use swagger_ui_redist::oauth;
+    /// let config = oauth::Config::new().use_basic_authentication_with_access_code_grant(true);
     /// ```
     pub fn use_basic_authentication_with_access_code_grant(
-        mut self,
+        &mut self,
         use_basic_authentication_with_access_code_grant: bool,
-    ) -> Self {
+    ) -> &mut Self {
         self.use_basic_authentication_with_access_code_grant =
             Some(use_basic_authentication_with_access_code_grant);
 
         self
     }
 
-    /// Add use_pkce_with_authorization_code_grant into [`Config`].
+    /// Add `use_pkce_with_authorization_code_grant` into [`Config`].
     ///
-    /// Method takes one argument which exposes the use_pkce_with_authorization_code_grant to the user.
-    /// Only applies to authorizationCode flows. [Proof Key for Code Exchange](https://tools.ietf.org/html/rfc7636)
+    /// Method takes one argument which exposes the
+    /// `use_pkce_with_authorization_code_grant` to the user. Only applies to authorizationCode flows. [Proof Key for Code Exchange](https://tools.ietf.org/html/rfc7636)
     /// brings enhanced security for OAuth public clients.
     /// The default is false.
     ///
     /// # Examples
     ///
-    /// ```rust
-    /// # use utoipa_swagger_ui::oauth;
-    /// let config = oauth::Config::new()
-    ///     .use_pkce_with_authorization_code_grant(true);
+    /// ```
+    /// # use swagger_ui_redist::oauth;
+    /// let config = oauth::Config::new().use_pkce_with_authorization_code_grant(true);
     /// ```
     pub fn use_pkce_with_authorization_code_grant(
-        mut self,
+        &mut self,
         use_pkce_with_authorization_code_grant: bool,
-    ) -> Self {
+    ) -> &mut Self {
         self.use_pkce_with_authorization_code_grant = Some(use_pkce_with_authorization_code_grant);
 
         self
     }
 }
 
-pub(crate) fn format_swagger_config(config: &Config, file: String) -> serde_json::Result<String> {
+#[cfg(test)]
+pub(crate) fn format_swagger_config(config: &Config, file: &str) -> serde_json::Result<String> {
     let init_string = format!(
         "{}\nui.initOAuth({});",
         END_MARKER,
@@ -274,10 +274,13 @@ pub(crate) fn format_swagger_config(config: &Config, file: String) -> serde_json
 }
 
 #[cfg(test)]
+const END_MARKER: &str = "//</editor-fold>";
+
+#[cfg(test)]
 mod tests {
     use super::*;
 
-    const TEST_CONTENT: &str = r###""
+    const TEST_CONTENT: &str = r#""
     //<editor-fold desc=\"Changeable Configuration Block\">
     window.ui = SwaggerUIBundle({
         {{urls}},
@@ -293,7 +296,7 @@ mod tests {
         layout: "StandaloneLayout"
     });
     //</editor-fold>
-    ""###;
+    ""#;
 
     #[test]
     fn format_swagger_config_oauth() {
@@ -301,7 +304,7 @@ mod tests {
             client_id: Some(String::from("my-special-client")),
             ..Default::default()
         };
-        let file = super::format_swagger_config(&config, TEST_CONTENT.to_string()).unwrap();
+        let file = format_swagger_config(&config, TEST_CONTENT).unwrap();
 
         let expected = r#"
 ui.initOAuth({
@@ -310,6 +313,6 @@ ui.initOAuth({
         assert!(
             file.contains(expected),
             "expected file to contain {expected}, was {file}"
-        )
+        );
     }
 }
