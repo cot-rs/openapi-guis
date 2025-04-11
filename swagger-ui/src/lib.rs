@@ -224,6 +224,14 @@ impl SwaggerUi {
             .file_paths
             .get(&SwaggerUiStaticFile::IndexCss)
             .expect("all files should be present");
+        let favicon_32_path = self
+            .file_paths
+            .get(&SwaggerUiStaticFile::Favicon32)
+            .expect("all files should be present");
+        let favicon_16_path = self
+            .file_paths
+            .get(&SwaggerUiStaticFile::Favicon16)
+            .expect("all files should be present");
         let js_path = self
             .file_paths
             .get(&SwaggerUiStaticFile::Js)
@@ -243,6 +251,8 @@ impl SwaggerUi {
     <title>{title}</title>
     <link rel="stylesheet" type="text/css" href="{css_path}" />
     <link rel="stylesheet" type="text/css" href="{index_css_path}" />
+    <link rel="icon" type="image/png" href="{favicon_32_path}" sizes="32x32" />
+    <link rel="icon" type="image/png" href="{favicon_16_path}" sizes="16x16" />
 </head>
 <body>
 <div id="swagger-ui"></div>
