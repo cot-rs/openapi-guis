@@ -1,9 +1,11 @@
 name: Rust CI
+
 on:
   push:
   pull_request:
   schedule:
     - cron: "0 0 * * *"
+
 env:
   CARGO_TERM_COLOR: always
   CARGO_INCREMENTAL: 0
@@ -11,11 +13,13 @@ env:
   CI: true
   SCCACHE_GHA_ENABLED: true
   RUSTC_WRAPPER: sccache
+
 # See: https://docs.github.com/en/actions/reference/workflow-syntax-for-github-actions#concurrency.
 # This will ensure that only one commit will be running tests at a time on each PR.
 concurrency:
   group: ${{ github.ref }}-${{ github.workflow }}
   cancel-in-progress: true
+
 jobs:
   build:
     # Run on external PRs and pushes to branches on the repo
@@ -25,70 +29,89 @@ jobs:
       matrix:
         rust: [stable, nightly, "1.85"] # 1.85 is the MSRV
         os: [ubuntu-latest, macos-latest, windows-latest]
+
     name: Build & test
     runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout source
         uses: actions/checkout@v4
+
       - name: Install Rust toolchain
         uses: dtolnay/rust-toolchain@master
         with:
           toolchain: ${{ matrix.rust }}
+
       - name: Cache Cargo registry
         uses: Swatinem/rust-cache@v2
         with:
           shared-key: 'rust-ci'
           cache-bin: 'false'
+
       - name: Run sccache-cache
         uses: mozilla-actions/sccache-action@v0.0.9
+
       - name: Install cargo-nextest
         uses: taiki-e/install-action@v2
         with:
           tool: nextest
+
       - name: Fetch dependencies
         run: cargo +${{ matrix.rust }} fetch --locked
+
       - name: Build
         run: cargo +${{ matrix.rust }} build --all-features --tests
+
       - name: Test
         run: cargo +${{ matrix.rust }} nextest run --all-features
+
       # Nextest does not support doc tests as in stable Rust
       # they are not exposed in the same way as normal tests.
       # https://github.com/nextest-rs/nextest/issues/16
       - name: Test docs
         run: cargo +${{ matrix.rust }} test --all-features --doc
+
   clippy:
     if: github.event_name == 'push' || github.event_name == 'schedule' || github.event.pull_request.head.repo.full_name != github.repository
+
     name: Clippy lint checks
     runs-on: ubuntu-latest
     needs: ["build"]
     steps:
       - name: Checkout source
         uses: actions/checkout@v4
+
       - name: Install Rust toolchain
         uses: dtolnay/rust-toolchain@master
         with:
           toolchain: stable
           components: clippy
+
       - name: Cache Cargo registry
         uses: Swatinem/rust-cache@v2
         with:
           shared-key: 'rust-ci'
           cache-bin: 'false'
           save-if: 'false'
+
       - name: Run sccache-cache
         uses: mozilla-actions/sccache-action@v0.0.9
+
       - name: Run clippy
         run: cargo clippy --no-deps --all-targets -- -D warnings
+
   coverage:
     if: github.event_name == 'push' || github.event_name == 'schedule' || github.event.pull_request.head.repo.full_name != github.repository
+
     name: Test coverage checks
     runs-on: ubuntu-latest
     needs: ["build"]
     steps:
       - name: Checkout source
         uses: actions/checkout@v4
+
       - name: Install LLVM
         run: sudo apt-get install -y llvm
+
       - name: Install Rust toolchain
         uses: dtolnay/rust-toolchain@master
         with:
@@ -100,12 +123,16 @@ jobs:
           shared-key: 'rust-ci'
           cache-bin: 'false'
           save-if: 'false'
+
       - name: Run sccache-cache
         uses: mozilla-actions/sccache-action@v0.0.9
+
       - name: Install cargo-llvm-cov
         uses: taiki-e/install-action@cargo-llvm-cov
+
       - name: Generate code coverage
         run: cargo llvm-cov --all-features --workspace --branch --doctests --codecov --output-path codecov.json
+
       - uses: codecov/codecov-action@v5
         with:
           files: coverage.json
@@ -113,73 +140,92 @@ jobs:
           fail_ci_if_error: true
         env:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+
   rustfmt:
     if: github.event_name == 'push' || github.event_name == 'schedule' || github.event.pull_request.head.repo.full_name != github.repository
+
     name: Code formatting checks
     runs-on: ubuntu-latest
     needs: ["build"]
     steps:
       - name: Checkout source
         uses: actions/checkout@v4
+
       - name: Install Rust toolchain
         uses: dtolnay/rust-toolchain@master
         with:
           toolchain: nightly
           components: rustfmt
+
       - name: Cache Cargo registry
         uses: Swatinem/rust-cache@v2
         with:
           shared-key: 'rust-ci'
           cache-bin: 'false'
           save-if: 'false'
+
       - name: Run sccache-cache
         uses: mozilla-actions/sccache-action@v0.0.9
+
       - name: Run fmt
         run: cargo fmt --all -- --check
+
   machete:
     if: github.event_name == 'push' || github.event_name == 'schedule' || github.event.pull_request.head.repo.full_name != github.repository
+
     name: Machete dependencies checks
     runs-on: ubuntu-latest
     needs: ["build"]
     steps:
       - name: Checkout source
         uses: actions/checkout@v4
+
       - name: Install Rust toolchain
         uses: dtolnay/rust-toolchain@master
         with:
           toolchain: stable
+
       - name: Cache Cargo registry
         uses: Swatinem/rust-cache@v2
         with:
           shared-key: 'rust-ci'
           cache-bin: 'false'
           save-if: 'false'
+
       - name: Run sccache-cache
         uses: mozilla-actions/sccache-action@v0.0.9
+
       - name: Run cargo-machete
         uses: bnjbvr/cargo-machete@v0.8.0
+
   minimal-versions:
     if: github.event_name == 'push' || github.event_name == 'schedule' || github.event.pull_request.head.repo.full_name != github.repository
+
     name: Minimal dependency versions build
     runs-on: ubuntu-latest
     needs: ["build"]
     steps:
       - name: Checkout source
         uses: actions/checkout@v4
+
       - name: Install Rust toolchain
         uses: dtolnay/rust-toolchain@master
         with:
           toolchain: nightly
+
       - name: Cache Cargo registry
         uses: Swatinem/rust-cache@v2
         with:
           shared-key: 'rust-ci'
           cache-bin: 'false'
           save-if: 'false'
+
       - name: Install cargo-hack
         uses: taiki-e/install-action@cargo-hack
+
       - name: Run sccache-cache
         uses: mozilla-actions/sccache-action@v0.0.9
+
       - name: Run cargo check with minimal versions
         run: |
           # Remove dev-dependencies from Cargo.toml to prevent the next `cargo update`
