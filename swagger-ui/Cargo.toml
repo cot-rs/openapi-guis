@@ -1,11 +1,13 @@
 [package]
 name = "swagger-ui-redist"
 version = "0.1.0"
+description = "A redistribution of Swagger UI for use with web servers."
+license = "MIT OR Apache-2.0"
+readme = "README.md"
 edition.workspace = true
 rust-version.workspace = true
 repository.workspace = true
 keywords.workspace = true
-readme.workspace = true
 authors.workspace = true
 categories = ["web-programming"]
 
