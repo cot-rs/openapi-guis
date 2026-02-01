@@ -35,5 +35,5 @@ future_not_send = "warn"
 
 [workspace.dependencies]
 serde = { version = "1.0.228", default-features = false }
-serde_json = { version = "1.0.148", default-features = false }
+serde_json = { version = "1.0.149", default-features = false }
 similar = "2.7"
