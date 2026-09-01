@@ -1316,8 +1316,8 @@ fn format_config(config: &Config<'_>, file: &str) -> Result<String, Box<dyn Erro
         Err(error) => return Err(Box::new(error)),
     };
 
-    // Replace {{config}} with pretty config json and remove the curly brackets `{
-    // }` from beginning and the end.
+    // Replace {{config}} with pretty config json and remove the curly brackets
+    // `{ }` from beginning and the end.
     Ok(file.replace("{{config}}", &config_json[2..&config_json.len() - 2]))
 }
 
